@@ -200,6 +200,24 @@
             left: 47px;
             top: 0;
         }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1) rotate(-45deg);
+            }
+            14% {
+                transform: scale(1.2) rotate(-45deg);
+            }
+            28% {
+                transform: scale(1) rotate(-45deg);
+            }
+            42% {
+                transform: scale(1.2) rotate(-45deg);
+            }
+            70% {
+                transform: scale(1) rotate(-45deg);
+            }
+        }
         
         @keyframes sway {
             0%,
@@ -450,6 +468,11 @@
 </head>
 
 <body>
+    <!-- Audio with ab.mp3 -->
+    <audio id="bgMusic" preload="auto" loop>
+        <source src="ab.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="hearts" aria-hidden="true">
         <div class="heart-float" style="left: 8%; animation-delay: 0s;">💗</div>
         <div class="heart-float" style="left: 22%; animation-delay: 2s;">💖</div>
@@ -492,7 +515,7 @@
             <div class="buttons">
                 <button id="revealBtn">Reveal my feelings</button>
                 <button class="secondary" id="kissBtn">Send a virtual kiss</button>
-                <button class="secondary" id="musicBtn">Use our background</button>
+                <button class="secondary" id="musicBtn">Play our song 🎵</button>
             </div>
             <div class="note">
                 Read this slowly, like you are feeling each kiss land softly on your forehead, your cheeks, and your lips.
@@ -516,12 +539,12 @@
         const messageBox = document.getElementById("messageBox");
         const particles = document.getElementById("particles");
         const body = document.body;
+        const music = document.getElementById("bgMusic");
 
         let textIndex = 0;
         let charIndex = 0;
         let typing = false;
         let musicOn = false;
-        let music = new Audio();
 
         function createParticle() {
             const particle = document.createElement("div");
@@ -592,47 +615,30 @@
             }, 620);
         });
 
-        musicBtn.addEventListener("click", async() => {
+        musicBtn.addEventListener("click", () => {
             if (!musicOn) {
-                try {
-                    // FIXED: Use your local MP3 file name exactly
-                    music.src = "happy-happy-band_aaj-dil-shayarana-arijit-singh-holiday-2014.mp3"; // ← Change this to your exact MP3 filename
-                    // OR if your file is named differently: music.src = "Aaj Dil Shaayraana.mp3";
-
-                    music.loop = true;
-                    music.volume = 0.3; // Lower volume for romance
-                    music.load(); // Force reload the audio file
-
-                    // User gesture required for autoplay - this handles it
-                    await music.play();
-
+                music.volume = 0.3;
+                music.play().then(() => {
                     musicOn = true;
-                    musicBtn.textContent = "Pause background ❤️";
-                    musicBtn.classList.add("secondary");
+                    musicBtn.textContent = "⏸️ Pause";
                     body.classList.add("playing");
-
-                } catch (e) {
-                    // Better error handling
-                    console.log("Audio play failed:", e);
-                    musicBtn.textContent = "Tap again for music";
+                }).catch(() => {
+                    musicBtn.textContent = "Tap again 🎵";
                     setTimeout(() => {
-                        musicBtn.textContent = "Use our background";
+                        musicBtn.textContent = "Play our song 🎵";
                     }, 2000);
-                }
+                });
             } else {
                 music.pause();
                 music.currentTime = 0;
                 musicOn = false;
-                musicBtn.textContent = "Use our background";
+                musicBtn.textContent = "Play our song 🎵";
                 body.classList.remove("playing");
             }
         });
 
-
-        // Create continuous particles
         setInterval(createParticle, 800);
     </script>
 </body>
-
 
 </html>
